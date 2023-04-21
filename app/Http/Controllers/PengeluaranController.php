@@ -61,6 +61,7 @@ class PengeluaranController extends Controller
     public function store(Request $request)
     {
         $pengeluaran = new Pengeluaran;
+        $pengeluaran->created_at   = $request['tgl'];
         $pengeluaran->jenis_pengeluaran   = $request['jenis'];
         $pengeluaran->nominal = $request['nominal'];
         $pengeluaran->save();

@@ -72,6 +72,13 @@ $(function(){
          return false;
      }
    });
+
+   $('#modal-form').on('shown.bs.modal', function(e) {
+      $('.datepicker').datepicker({
+        format: "yyyy-mm-dd",
+        endDate: new Date()
+      });
+    });
 });
 
 function addForm(){

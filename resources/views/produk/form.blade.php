@@ -16,7 +16,8 @@
   <div class="form-group">
     <label for="kode" class="col-md-3 control-label">Kode Produk</label>
     <div class="col-md-6">
-      <input id="kode" type="number" class="form-control" name="kode" autofocus required>
+      <input id="kode" type="text" class="form-control" name="kode" autofocus required>
+      <button class="btn btn-warning" id="random" type="button">Random Code</button>
       <span class="help-block with-errors"></span>
     </div>
   </div>
@@ -58,18 +59,18 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <!--<div class="form-group">
     <label for="diskon" class="col-md-3 control-label">Diskon</label>
     <div class="col-md-2">
       <input id="diskon" type="text" class="form-control" name="diskon" required>
       <span class="help-block with-errors"></span>
     </div>
-  </div>
+  </div>-->
 
   <div class="form-group">
     <label for="harga_jual" class="col-md-3 control-label">Harga Jual</label>
     <div class="col-md-3">
-      <input id="harga_jual" type="text" class="form-control" name="harga_jual" required>
+      <input id="harga_jual" type="text" class="form-control" name="harga_jual" required onblur="checkHarga(this.value)">
       <span class="help-block with-errors"></span>
     </div>
   </div>
@@ -77,7 +78,7 @@
   <div class="form-group">
     <label for="stok" class="col-md-3 control-label">Stok</label>
     <div class="col-md-2">
-      <input id="stok" type="text" class="form-control" name="stok" required>
+      <input id="stok" type="text" class="form-control" name="stok" required value="0" readonly>
       <span class="help-block with-errors"></span>
     </div>
   </div>
@@ -94,3 +95,5 @@
          </div>
       </div>
    </div>
+
+

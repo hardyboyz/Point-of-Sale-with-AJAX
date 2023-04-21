@@ -17,7 +17,7 @@
         <a onclick="periodeForm()" class="btn btn-success"><i class="fa fa-plus-circle"></i> Ubah Periode</a>
         <a href="laporan/pdf/{{$awal}}/{{$akhir}}" target="_blank" class="btn btn-info"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
       </div>
-      <div class="box-body">  
+      <div class="box-body table-responsive">  
 
 <table class="table table-striped tabel-laporan">
 <thead>

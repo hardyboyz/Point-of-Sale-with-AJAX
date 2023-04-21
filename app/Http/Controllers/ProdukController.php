@@ -6,6 +6,8 @@ use App\Kategori;
 use Datatables;
 use PDF;
 use App\Produk;
+use App\PembelianDetail;
+use App\PenjualanDetail;
 use Illuminate\Http\Request;
 
 class ProdukController extends Controller
@@ -39,7 +41,7 @@ class ProdukController extends Controller
             $row[] = $list->merk;
             $row[] = "Rp. ".format_uang($list->harga_beli);
             $row[] = "Rp. ".format_uang($list->harga_jual);
-            $row[] = $list->diskon."%";
+            //$row[] = $list->diskon."%";
             $row[] = $list->stok;
             $row[] = "<div class='btn-group'>
                     <a onclick='editForm(".$list->id_produk.")' class='btn btn-primary btn-sm'><i class='fa fa-pencil'></i></a>
@@ -79,7 +81,7 @@ class ProdukController extends Controller
             $produk->id_kategori    = $request['kategori'];
             $produk->merk          = $request['merk'];
             $produk->harga_beli      = $request['harga_beli'];
-            $produk->diskon       = $request['diskon'];
+            //$produk->diskon       = $request['diskon'];
             $produk->harga_jual    = $request['harga_jual'];
             $produk->stok          = $request['stok'];
             $produk->save();
@@ -126,7 +128,7 @@ class ProdukController extends Controller
         $produk->id_kategori    = $request['kategori'];
         $produk->merk          = $request['merk'];
         $produk->harga_beli      = $request['harga_beli'];
-        $produk->diskon       = $request['diskon'];
+        //$produk->diskon       = $request['diskon'];
         $produk->harga_jual    = $request['harga_jual'];
         $produk->stok          = $request['stok'];
         $produk->update();
@@ -164,5 +166,86 @@ class ProdukController extends Controller
         $pdf = PDF::loadView('produk.barcode', compact('dataproduk', 'no'));
         $pdf->setPaper('a4', 'potrait');      
         return $pdf->stream();
+    }
+
+    public function getJSON(Request $request){
+
+        ## Read value
+        $draw = $request->get('draw') ?? 1;
+        $start = $request->get("start") ?? 1;
+        $rowperpage = $request->get("length") ?? 10; // Rows display per page
+   
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $search_arr = $request->get('search');
+   
+        // $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        // $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        // $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+        // $searchValue = $search_arr['value']; // Search value
+   
+        // Total records
+        $totalRecords = Produk::select('count(*) as allcount')->count();
+        $totalRecordswithFilter = Produk::select('count(*) as allcount')->count();
+   
+        // Fetch records
+        // $records = Product::orderBy($columnName,$columnSortOrder)
+        //   ->where('produk.nama_product', 'like', '%' .$searchValue . '%')
+        //   ->select('produk.*')
+        //   ->skip($start)
+        //   ->take($rowperpage)
+        //   ->get();
+        $records = Produk::select('produk.*');
+
+        if(isset($columnIndex_arr)){
+            $columnIndex = $columnIndex_arr[0]['column'];
+            $columnName = $columnName_arr[$columnIndex]['data'];
+            $records = $records->orderBy($columnName,$columnSortOrder);
+        }
+
+        if(isset($searchValue)){
+            $records = $records->where('produk.nama_produk', 'like', '%' .$searchValue . '%');
+            $totalRecordswithFilter = Produk::select('count(*) as allcount')->where('nama_produk', 'like', '%' .$searchValue . '%')->count();
+        }
+
+        $records = $records->select('produk.*')
+        ->skip($start)
+        ->take($rowperpage)
+        ->get();
+   
+        $data_arr = [];
+        
+        foreach($records as $record){
+           $id = $record->id;
+           $nama_produk = $record->nama_produk;
+           $kode_produk = $record->kode_produk;
+           $harga_jual = $record->harga_jual;
+           $stok = $this->getStock($record->kode_produk);
+   
+           $data_arr[] = array(
+             "id" => $id,
+             "nama_produk" => $nama_produk,
+             "kode_produk" => $kode_produk,
+             "harga_jual" => number_format($harga_jual),
+             "stok" => $stok
+           );
+        }
+   
+        $response = array(
+           "draw" => intval($draw),
+           "iTotalRecords" => $totalRecords,
+           "iTotalDisplayRecords" => $totalRecordswithFilter,
+           "data" => $data_arr
+        );
+   
+        echo json_encode($response);
+        exit;
+      }
+
+      public function getStock($kode_produk){
+        $stockIn = PembelianDetail::where('kode_produk',$kode_produk)->sum('jumlah');
+        $stockOut = PenjualanDetail::where('kode_produk',$kode_produk)->sum('jumlah');
+        return $stockIn - $stockOut;
     }
 }

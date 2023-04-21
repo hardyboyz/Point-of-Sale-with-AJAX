@@ -9,7 +9,19 @@
    <li>produk</li>
 @endsection
 
-@section('content')     
+@section('content')
+<style>
+.dataTables_filter {
+   float: left !important;
+}
+.dataTables_length {
+   float: right !important;
+}
+.input-sm{
+  width: 250px;
+    border: solid 1px #00a65a;
+}
+</style>
 <div class="row">
   <div class="col-xs-12">
     <div class="box">
@@ -22,7 +34,8 @@
 
 <form method="post" id="form-produk">
 {{ csrf_field() }}
-<table class="table table-striped">
+<div class="table-responsive">
+<table class="table table-striped display table-responsive">
 <thead>
    <tr>
       <th width="20"><input type="checkbox" value="1" id="select-all"></th>
@@ -33,13 +46,14 @@
       <th>Merk</th>
       <th>Harga Beli</th>
       <th>Harga Jual</th>
-      <th>Diskon</th>
+      <!--<th>Diskon</th>-->
       <th>Stok</th>
       <th width="100">Aksi</th>
    </tr>
 </thead>
 <tbody></tbody>
 </table>
+</div>
 </form>
 
       </div>
@@ -52,11 +66,14 @@
 
 @section('script')
 <script type="text/javascript">
+
+
 var table, save_method;
 $(function(){
    table = $('.table').DataTable({
      "processing" : true,
      "serverside" : true,
+     "dom":'flrtip',
      "ajax" : {
        "url" : "{{ route('produk.data') }}",
        "type" : "GET"
@@ -100,7 +117,21 @@ $(function(){
          return false;
      }
    });
+
+   $('#modal-form').on('show.bs.modal', function (event) {
+
+      $('#random').on('click',function(){
+        $('#kode').val(Math.floor(Math.random() * 1000000000) + 1);
+      });
+    })
 });
+
+function checkHarga(value){
+  var harga_beli = parseInt($('#harga_beli').val());
+  if(parseInt(value) < harga_beli){
+      swal("", "Harga Jual tidak boleh kurang dari Harga Beli", "error");
+  }
+}
 
 function addForm(){
    save_method = "add";
@@ -109,6 +140,10 @@ function addForm(){
    $('#modal-form form')[0].reset();            
    $('.modal-title').text('Tambah Produk');
    $('#kode').attr('readonly', false);
+
+   $('#modal-form').on('shown.bs.modal', function () {
+          $('#kode').focus();
+      });
 }
 
 function editForm(id){

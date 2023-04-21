@@ -43,12 +43,20 @@
 </div>
 
 @include('member.form')
+@include('member.penginapan')
 @endsection
 
 @section('script')
 <script type="text/javascript">
 var table, save_method;
 $(function(){
+  $('#penginapan-form').on('shown.bs.modal', function(e) {
+    $('.datepicker').datepicker({
+      format: "yyyy-mm-dd",
+      endDate: new Date()
+    });
+  });
+
    table = $('.table').DataTable({
      "processing" : true,
      "ajax" : {
@@ -96,6 +104,34 @@ $(function(){
    });
 });
 
+$('#penginapan-form form').validator().on('submit', function(e){
+  if(!e.isDefaultPrevented()){
+      var id = $('#id').val();
+      if(save_method == "add") url = "{{ route('penginapan.store') }}";
+      else url = "penginapan/"+id;
+      
+      $.ajax({
+        url : url,
+        type : "POST",
+        data : $('#penginapan-form form').serialize(),
+        dataType: 'JSON',
+        success : function(data){
+        if(data.msg=="error"){
+          alert('Kode member sudah digunakan!');
+          $('#kode').focus().select();
+        }else{
+          $('#penginapan-form').modal('hide');
+          window.location='{{ route("penginapan.index") }}';
+        }
+        },
+        error : function(){
+          alert("Tidak dapat menyimpan data!");
+        }   
+      });
+      return false;
+  }
+});
+
 function addForm(){
    save_method = "add";
    $('input[name=_method]').val('POST');
@@ -105,29 +141,33 @@ function addForm(){
    $('#kode').attr('readonly', false);
 }
 
+function penginapanForm(id){
+   save_method = "add";
+   $('input[name=_method]').val('POST');
+   $('#penginapan-form').modal('show');
+   $('#penginapan-form form')[0].reset();            
+   $('.penginapan-title').text('Tambah Penginapan Kucing');
+
+   data = getMember(id);
+   $('#member_id').val(data.id_member);
+   $('#member_name').val(data.nama + " - ");
+   $('#member_name').attr('readonly', true);
+}
+
 function editForm(id){
    save_method = "edit";
    $('input[name=_method]').val('PATCH');
    $('#modal-form form')[0].reset();
-   $.ajax({
-     url : "member/"+id+"/edit",
-     type : "GET",
-     dataType : "JSON",
-     success : function(data){
-       $('#modal-form').modal('show');
-       $('.modal-title').text('Edit Member');
-       
-       $('#id').val(data.id_member);
-       $('#kode').val(data.kode_member).attr('readonly', true);
-       $('#nama').val(data.nama);
-       $('#alamat').val(data.alamat);
-       $('#telpon').val(data.telpon);
-       
-     },
-     error : function(){
-       alert("Tidak dapat menampilkan data!");
-     }
-   });
+
+   data = getMember(id);
+    $('#modal-form').modal('show');
+    $('.modal-title').text('Edit Member');
+
+    $('#id').val(data.id_member);
+    $('#kode').val(data.kode_member).attr('readonly', true);
+    $('#nama').val(data.nama);
+    $('#alamat').val(data.alamat);
+    $('#telpon').val(data.telpon);
 }
 
 function deleteData(id){
@@ -152,6 +192,24 @@ function printCard(){
   }else{
     $('#form-member').attr('target', '_blank').attr('action', "member/cetak").submit();
   }
+}
+
+function getMember(id){
+  var result = null;
+  $.ajax({
+     url : "member/"+id+"/edit",
+     type : "GET",
+     dataType : "JSON",
+     async : false,
+     success : function(data){
+       result = data;
+     },
+     error : function(err){
+       //alert("Tidak dapat menampilkan data!");
+       result = "error";
+     }
+   });
+   return result;
 }
 </script>
 @endsection

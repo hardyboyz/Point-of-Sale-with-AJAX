@@ -29,7 +29,9 @@ class PembelianDetailController extends Controller
 
         $detail = PembelianDetail::leftJoin('produk', 'produk.kode_produk', '=', 'pembelian_detail.kode_produk')
             ->where('id_pembelian', '=', $id)
-            ->get();
+            ->orderBy('pembelian_detail.id_pembelian_detail','desc')
+            ->get(['*','pembelian_detail.harga_beli as harga_beli_detail']);
+            //dd($detail);
         $no = 0;
         $data = array();
         $total = 0;
@@ -40,13 +42,14 @@ class PembelianDetailController extends Controller
             $row[] = $no;
             $row[] = $list->kode_produk;
             $row[] = $list->nama_produk;
-            $row[] = "Rp. ".format_uang($list->harga_beli);
-            $row[] = "<input type='number' class='form-control' name='jumlah_$list->id_pembelian_detail' value='$list->jumlah' onChange='changeCount($list->id_pembelian_detail)'>";
-            $row[] = "Rp. ".format_uang($list->harga_beli * $list->jumlah);
+            $row[] = "Rp.<input type='number' class='form-control' name='harga_beli_$list->id_pembelian_detail' value='$list->harga_beli_detail' onChange='changeCount($list->id_pembelian_detail)' style='width:9em'>";
+
+            $row[] = "<input type='number' class='form-control' name='jumlah_$list->id_pembelian_detail' value='$list->jumlah' onChange='changeCount($list->id_pembelian_detail)' style='width:6em'>";
+            $row[] = "Rp. ".format_uang($list->harga_beli_detail * $list->jumlah);
             $row[] = '<a onclick="deleteItem('.$list->id_pembelian_detail.')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
             $data[] = $row;
 
-            $total += $list->harga_beli * $list->jumlah;
+            $total += $list->harga_beli_detail * $list->jumlah;
             $total_item += $list->jumlah;
         }
 
@@ -101,9 +104,14 @@ class PembelianDetailController extends Controller
      * @param  \App\PembelianDetail  $pembelianDetail
      * @return \Illuminate\Http\Response
      */
-    public function edit(PembelianDetail $pembelianDetail)
+    public function edit($id)
     {
-        //
+        $produk = Produk::all();
+        $idpembelian = $id;
+        $pembelian = Pembelian::where('id_pembelian',$idpembelian)->first();
+        $supplier = Supplier::where('id_supplier',$pembelian->id_supplier)->first();
+
+        return view('pembelian_detail.index', compact('produk', 'idpembelian', 'supplier','pembelian'));
     }
 
     /**
@@ -116,8 +124,10 @@ class PembelianDetailController extends Controller
     public function update(Request $request, $id)
     {
         $nama_input = "jumlah_".$id;
+        $harga_beli = "harga_beli_".$id;
         $detail = PembelianDetail::find($id);
         $detail->jumlah = $request[$nama_input];
+        $detail->harga_beli = $request[$harga_beli];
         $detail->sub_total = $detail->harga_beli * $request[$nama_input];
         $detail->update();
     }
@@ -134,8 +144,8 @@ class PembelianDetailController extends Controller
         $detail->delete();
     }
 
-    public function loadForm($diskon, $total){
-        $bayar = $total - ($diskon / 100 * $total);
+    public function loadForm($diskon = 0, $total = 0){
+        $bayar = $total - $diskon;
         $data = array(
             "totalrp" => format_uang($total),
             "bayar" => $bayar,

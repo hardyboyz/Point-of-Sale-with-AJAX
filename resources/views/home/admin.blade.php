@@ -61,7 +61,7 @@
     <div class="col-md-12">
         <div class="box">
             <div class="box-header with-border">
-            	<h3 class="box-title">Grafik Pendapatan {{ tanggal_indonesia($awal) }} s/d {{ tanggal_indonesia($akhir) }}</h3>
+            	<h3 class="box-title">Graphic Sales. {{ date('l, d M Y', strtotime($awal)) }} &raquo; {{ date('l, d M Y', strtotime($akhir)) }}</h3>
             </div>
             <div class="box-body">
             	<div class="chart">
@@ -84,7 +84,7 @@ $(function () {
     labels: {{ json_encode($data_tanggal) }},
     datasets: [
       {
-        label: "Electronics",
+        label: "HYPETSHOP MANGGAR",
         fillColor: "rgba(60,141,188,0.9)",
         strokeColor: "rgb(210, 214, 222)",
         pointColor: "rgb(210, 214, 222)",
@@ -98,7 +98,14 @@ $(function () {
 
   var salesChartOptions = {
     pointDot: false,
-    responsive: true
+    responsive: true,
+    tooltips: {
+      callbacks: {
+          label: function(tooltipItem, data) {
+              return tooltipItem.yLabel.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+          }
+      }
+  }
   };
 
   //Create the line chart

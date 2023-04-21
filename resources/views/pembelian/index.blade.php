@@ -19,7 +19,7 @@
         <a href="{{ route('pembelian_detail.index') }}" class="btn btn-info"><i class="fa fa-plus-circle"></i> Transaksi Aktif</a>
         @endif
       </div>
-      <div class="box-body">  
+      <div class="box-body table-responsive">  
 
 <table class="table table-striped tabel-pembelian">
 <thead>
@@ -29,7 +29,7 @@
       <th>Supplier</th>
       <th>Total Item</th>
       <th>Total Harga</th>
-      <th>Diskon</th>
+      <!-- <th>Diskon</th> -->
       <th>Total Bayar</th>
       <th width="100">Aksi</th>
    </tr>
@@ -51,6 +51,7 @@
 var table, save_method, table1;
 $(function(){
    table = $('.tabel-pembelian').DataTable({
+    "pageLength": 100,
      "processing" : true,
      "serverside" : true,
      "ajax" : {
@@ -77,6 +78,10 @@ function showDetail(id){
 
     table1.ajax.url("pembelian/"+id+"/lihat");
     table1.ajax.reload();
+}
+
+function detail(id){
+    window.location = "{{ url('pembelian_detail') }}/"+id+"/edit";
 }
 
 function deleteData(id){

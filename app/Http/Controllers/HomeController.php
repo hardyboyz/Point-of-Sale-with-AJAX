@@ -33,7 +33,7 @@ class HomeController extends Controller
     {
         $setting = Setting::find(1);
 
-        $awal = date('Y-m-d', mktime(0,0,0, date('m'), 1, date('Y')));
+        $awal = date('Y-m-01');
         $akhir = date('Y-m-d');
 
         $tanggal = $awal;
@@ -43,7 +43,7 @@ class HomeController extends Controller
         while(strtotime($tanggal) <= strtotime($akhir)){ 
             $data_tanggal[] = (int)substr($tanggal,8,2);
             
-            $pendapatan = Penjualan::where('created_at', 'LIKE', "$tanggal%")->sum('bayar');
+            $pendapatan = Penjualan::where('transaction_date', 'LIKE', "$tanggal%")->sum('bayar');
             $data_pendapatan[] = (int) $pendapatan;
 
             $tanggal = date('Y-m-d', strtotime("+1 day", strtotime($tanggal)));

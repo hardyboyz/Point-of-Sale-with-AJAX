@@ -14,6 +14,13 @@
    
    <input type="hidden" id="id" name="id">
    <div class="form-group">
+      <label for="tanggal" class="col-md-3 control-label">Tanggal</label>
+      <div class="col-md-8">
+         <input id="tgl" type="text" class="form-control datepicker" name="tgl" autofocus required>
+         <span class="help-block with-errors"></span>
+      </div>
+   </div>
+   <div class="form-group">
       <label for="jenis" class="col-md-3 control-label">Jenis Pengeluaran</label>
       <div class="col-md-8">
          <input id="jenis" type="text" class="form-control" name="jenis" autofocus required>
@@ -41,3 +48,13 @@
          </div>
       </div>
    </div>
+
+   <style>
+    .datepicker {
+      z-index: 1600 !important; /* has to be larger than 1050 */
+    }
+</style>
+
+<script>
+
+</script>

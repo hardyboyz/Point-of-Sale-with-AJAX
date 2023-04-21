@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{{ config('app.name', 'Laravel') }}</title>
+  <title>{{ Auth::user()->name }} - {{ config('app.name', 'Laravel') }}</title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   
@@ -22,8 +22,8 @@
   <header class="main-header">
 
     <a href="#" class="logo">
-      <span class="logo-mini"><b>HM</b></span>
-     <span class="logo-lg"><b>Hey</b>Mart</span>
+      <span class="logo-mini"><b>HY</b></span>
+     <span class="logo-lg"><b>HY</b>PETSHOP</span>
     </a>
 
 
@@ -80,18 +80,28 @@
         <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
 
       @if( Auth::user()->level == 1 )
-        <li><a href="{{ route('kategori.index') }}"><i class="fa fa-cube"></i> <span>Kategori</span></a></li>
-        <li><a href="{{ route('produk.index') }}"><i class="fa fa-cubes"></i> <span>Produk</span></a></li>
+        <li class="header">PRODUCTS</li>
+        <li><a href="{{ route('produk.index') }}"><i class="fa fa-cubes"></i> <span>Products</span></a></li>
+        <li><a href="{{ route('kategori.index') }}"><i class="fa fa-cube"></i> <span>Category</span></a></li>
+        <li><a href="{{ route('supplier.index') }}"><i class="fa fa-truck"></i> <span>Suppliers</span></a></li>
+
+        <li class="header">EXPENSES</li>
+        <li><a href="{{ route('pembelian.index') }}"><i class="fa fa-download"></i> <span>Purchases</span></a></li>
+        <li><a href="{{ route('pengeluaran.index') }}"><i class="fa fa-money"></i> <span>Other Expenses</span></a></li>
+
+        <li class="header">REPORT</li>
+        <li><a href="{{ route('penjualan.index') }}"><i class="fa fa-upload"></i> <span>Sales</span></a></li>
+        <li><a href="{{ route('laporan.profit_loss') }}"><i class="fa fa-file-pdf-o"></i> <span>Profit/Loss</span></a></li>
+        <li><a href="{{ route('laporan.index') }}"><i class="fa fa-file-pdf-o"></i> <span>Income/Expenses</span></a></li>
         <li><a href="{{ route('member.index') }}"><i class="fa fa-credit-card"></i> <span>Member</span></a></li>
-        <li><a href="{{ route('supplier.index') }}"><i class="fa fa-truck"></i> <span>Supplier</span></a></li>
-        <li><a href="{{ route('pengeluaran.index') }}"><i class="fa fa-money"></i> <span>Pengeluaran</span></a></li><li><a href="{{ route('user.index') }}""><i class="fa fa-user"></i> <span>User</span></a></li>       
-        <li><a href="{{ route('penjualan.index') }}"><i class="fa fa-upload"></i> <span>Penjualan</span></a></li>
-        <li><a href="{{ route('pembelian.index') }}"><i class="fa fa-download"></i> <span>Pembelian</span></a></li>
-        <li><a href="{{ route('laporan.index') }}"><i class="fa fa-file-pdf-o"></i> <span>Laporan</span></a></li>
         <li><a href="{{ route('setting.index') }}"><i class="fa fa-gears"></i> <span>Setting</span></a></li>
+        <li><a href="{{ route('user.index') }}"><i class="fa fa-user"></i> <span>Users</span></a></li>   
       @else
-        <li><a href="{{ route('transaksi.index') }}"><i class="fa fa-shopping-cart"></i> <span>Transaksi</span></a></li>
-        <li><a href="{{ route('transaksi.new') }}"><i class="fa fa-cart-plus"></i> <span>Transaksi Baru</span></a></li>
+        {{--<li><a href="{{ route('transaksi.index') }}"><i class="fa fa-shopping-cart"></i> <span>Transaction</span></a></li>--}}
+        <li><a href="{{ route('transaksi.new') }}"><i class="fa fa-cart-plus"></i> <span>New Transaction</span></a></li>
+        <li><a href="{{ route('transaksi.mytransaction') }}"><i class="fa fa-list"></i> <span>Transaction Today</span></a></li>
+        <li><a href="{{ route('member.index') }}"><i class="fa fa-credit-card"></i> <span>Member</span></a></li>
+        <li><a href="{{ route('penginapan.index') }}"><img src="/public/images/logo_kecil.png" width="30px" /><span>Penginapan Kucing</span></a></li>
       @endif
       </ul>
     </section>
@@ -120,9 +130,9 @@
   <!-- Footer -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      Aplikasi POS by: Rohi Abdulloh | Upgraded Laravel 6.2 by : <a href="http://github.com/syofyanzuhad">syofyan_zuhad</a>
+      HYPETSHOP ~ MANGGAR By Laravel
     </div>
-    <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2021 <a href="#">Company</a>.</strong> All rights reserved.
   </footer>
   <!-- End Footer -->
  
@@ -134,7 +144,14 @@
 <script src="{{ asset('adminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('adminLTE/plugins/datatables/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ asset('adminLTE/plugins/datepicker/bootstrap-datepicker.js') }}"></script>
+<script src="{{ asset('js/sweetalert.min.js') }}"></script>
 <script src="{{ asset('js/validator.min.js') }}"></script>
+<script src="{{ asset('js/terbilang.js') }}"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
 
 @yield('script')
 

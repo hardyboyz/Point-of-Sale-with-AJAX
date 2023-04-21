@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-  Baranda
+  Dashboard
 @endsection
 
 @section('breadcrumb')
@@ -14,10 +14,9 @@
   <div class="col-xs-12">
     <div class="box">
        <div class="box-body text-center">
-            <h1>Selamat Datang</h1>
-            <h2>Anda login sebagai KASIR</h2>
+            <h1>Hellow {{ Auth::user()->name }}, Welcome.</h1>
             <br><br>
-            <a class="btn btn-success btn-lg" href="{{ route('transaksi.new') }}">Transaksi Baru</a>
+            <a class="btn btn-success btn-lg" href="{{ route('transaksi.new') }}">New Transaction</a>
             <br><br><br>
       </div>
    </div>

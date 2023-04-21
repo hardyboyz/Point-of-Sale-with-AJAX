@@ -1,81 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-   <title>Nota PDF</title>
+   <title>Struk</title>
    <style type="text/css">
-      table td{font: arial 12px;}
-      table.data td,
-      table.data th{
-         border: 1px solid #ccc;
-         padding: 5px;
-      }
-      table.data th{
+      table td {font: arial;font-size:x-small}
+      table th{
          text-align: center;
       }
-      table.data{ border-collapse: collapse }
+      table.data{ border-collapse: portrait }
+
    </style>
 </head>
-<body>
-
-<table width="100%">
+<body onload="goBack()" onafterprint="window.location='{{ $url }}'">
+<div style="margin-left:-10px">
+<table width="100%" style="text-align:center;margin:0">
   <tr>
-     <td rowspan="3" width="60%"><img src="../public/images/{{$setting->logo}}" width="150"><br>
-     {{ $setting->alamat }}<br><br>
-     </td>
-     <td>Tanggal</td>
-     <td>: {{ tanggal_indonesia(date('Y-m-d')) }}</td>
-  </tr>     
-  <tr>
-     <td>Kode Member</td>
-     <td>: {{ $penjualan->kode_member }}</td>
+     <td rowspan="3" width="120%"><img src="{{ url('/images/'.$setting->logo) }}" width="160px"><br>
+     <span style="font-size:7px">{{ date('l, d-m-Y H:i') }}</span>
+     <hr/>
+     {{--<td>Kode Member</td>
+     <td>: {{ $penjualan->kode_member }}</td>--}}
   </tr>
 </table>
          
-<table width="100%" class="data">
-<thead>
-   <tr>
-    <th>No</th>
-    <th>Kode Produk</th>
-    <th>Nama Produk</th>
-    <th>Harga Satuan</th>
-    <th>Jumlah</th>
-    <th>Diskon</th>
-    <th>Subtotal</th>
-   </tr>
-
-   <tbody>
+<table width="100%" style="border:solid 1px #111">
+ 
+   <?php $diskon = 0; ?>
     @foreach($detail as $data)
-      
+    <?php $diskon+= $data->diskon; ?>
     <tr>
-       <td>{{ ++$no }}</td>
-       <td>{{ $data->kode_produk }}</td>
-       <td>{{ $data->nama_produk }}</td>
-       <td align="right">{{ format_uang($data->harga_jual) }}</td>
-       <td>{{ $data->jumlah }}</td>
-       <td align="right">{{ format_uang($data->diskon) }}%</td>
-       <td align="right">{{ format_uang($data->sub_total) }}</td>
+       <td style="width:40%">{{ $data->nama_produk }}</td>
+       <td align="center"><span style="font-weight:bold">{{ $data->jumlah }}</span></td>
+       <td align="left">{{ format_uang($data->sub_total) }}</td>
     </tr>
     @endforeach
    
-   </tbody>
-   <tfoot>
-    <tr><td colspan="6" align="right"><b>Total Harga</b></td><td align="right"><b>{{ format_uang($penjualan->total_harga) }}</b></td></tr>
-    <tr><td colspan="6" align="right"><b>Diskon</b></td><td align="right"><b>{{ format_uang($penjualan->diskon) }}%</b></td></tr>
-    <tr><td colspan="6" align="right"><b>Total Bayar</b></td><td align="right"><b>{{ format_uang($penjualan->bayar) }}</b></td></tr>
-    <tr><td colspan="6" align="right"><b>Diterima</b></td><td align="right"><b>{{ format_uang($penjualan->diterima) }}</b></td></tr>
-    <tr><td colspan="6" align="right"><b>Kembali</b></td><td align="right"><b>{{ format_uang($penjualan->diterima - $penjualan->bayar) }}</b></td></tr>
-   </tfoot>
+    <tr><td colspan="1" align="right">SubTotal</td><td align="right"><b>{{ format_uang($penjualan->total_harga ?? 0) }}</b></td></tr>
+    <tr><td colspan="1" align="right">Diskon</td><td align="right"><b>{{ format_uang($diskon) }}</b></td></tr>
+    <tr><td colspan="1" align="right">Total</td><td align="right"><b>{{ format_uang($penjualan->bayar ?? 0) }}</b></td></tr>
+    <tr><td colspan="1" align="right">Diterima</td><td align="right"><b>{{ format_uang($penjualan->diterima ?? 0) }}</b></td></tr>
+    <tr><td colspan="1" align="right">Kembali</td><td align="right"><b>{{ format_uang(($penjualan->diterima ?? 0) - ($penjualan->bayar ?? 0)) }}</b></td></tr>
+
 </table>
 
 <table width="100%">
   <tr>
-    <td>
-      <b>Terimakasih telah berbelanja dan sampai jumpa</b>
+    <td align="center">
+      <b>~Makase Yeee~ {{ $member->nama ?? '' }}<br/> <span style="text-decoration:underline">Follow IG @HYPETSHOPBELITONG</span></b>
     </td>
     <td align="center">
-      Kasir<br><br><br> {{Auth::user()->name}}
+      <!--{{ Auth::user()->name}}-->
     </td>
   </tr>
 </table>
+   </div>
+  
 </body>
 </html>
+
+<script type="text/javascript">
+   function goBack(){
+	   window.print();
+	   setTimeout(function(){
+		   window.location='{{ $url }}'
+	   },2000);
+   }
+   </script>

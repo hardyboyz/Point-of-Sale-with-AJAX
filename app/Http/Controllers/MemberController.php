@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use PDF;
 use App\Member;
 use Illuminate\Http\Request;
+use App\Produk;
 
 class MemberController extends Controller
 {
@@ -15,12 +16,17 @@ class MemberController extends Controller
      */
     public function index()
     {
-        return view('member.index'); 
+        $total_member = Member::count();
+        $output = ['total_member' => 1000 + ($total_member + 1)];
+        $penginapan = Produk::whereIn('id_produk',[497,498])->get();
+        $date = date('Y-m-d H:i');
+        return view('member.index',compact('output','penginapan','date')); 
     }
 
     public function listData()
     {
         $member = Member::orderBy('id_member', 'desc')->get();
+        
         $no = 0;
         $data = array();
         foreach($member as $list){
@@ -31,14 +37,15 @@ class MemberController extends Controller
             $row[] = $list->kode_member;
             $row[] = $list->nama;
             $row[] = $list->alamat;
-            $row[] = $list->telpon;
+            $row[] = 0;//$list->telpon;
             $row[] = '<div class="btn-group">
+                    <a title="Penginapan Kucing" onclick="penginapanForm('.$list->id_member.')" class="btn btn-primary btn-sm"><img src="images/logo_kecil.png" width="20px"/></a>
                     <a onclick="editForm('.$list->id_member.')" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
                     <a onclick="deleteData('.$list->id_member.')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a></div>';
             $data[] = $row;
         }
 
-        $output = array("data" => $data);
+        $output = array("data" => $data,'total_member');
         return response()->json($output);
     }
     

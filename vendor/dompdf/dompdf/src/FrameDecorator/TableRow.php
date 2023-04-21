@@ -33,22 +33,26 @@ class TableRow extends AbstractFrameDecorator
     /**
      * Remove all non table-cell frames from this row and move them after
      * the table.
+     *
+     * @deprecated
      */
     function normalise()
     {
         // Find our table parent
         $p = TableFrameDecorator::find_parent_table($this);
 
-        $erroneous_frames = array();
+        $erroneous_frames = [];
         foreach ($this->get_children() as $child) {
             $display = $child->get_style()->display;
 
-            if ($display !== "table-cell")
+            if ($display !== "table-cell") {
                 $erroneous_frames[] = $child;
+            }
         }
 
         //  dump the extra nodes after the table.
-        foreach ($erroneous_frames as $frame)
+        foreach ($erroneous_frames as $frame) {
             $p->move_after($frame);
+        }
     }
 }

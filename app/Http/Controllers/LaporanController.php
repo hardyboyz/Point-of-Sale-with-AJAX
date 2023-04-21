@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Pembelian;
 use App\Penjualan;
+use App\PenjualanDetail;
 use App\Pengeluaran;
 use Illuminate\Http\Request;
+use PDF;
+use Auth;
+use DB;
 
 class LaporanController extends Controller
 {
@@ -26,16 +30,20 @@ class LaporanController extends Controller
         $data = array();
         $pendapatan = 0;
         $total_pendapatan = 0;
+        $total_peng = 0;
+        $total_penj = 0;
         while(strtotime($awal) <= strtotime($akhir)){
             $tanggal = $awal;
             $awal = date('Y-m-d', strtotime("+1 day", strtotime($awal)));
 
-            $total_penjualan = Penjualan::where('created_at', 'LIKE', "$tanggal%")->sum('bayar');
+            $total_penjualan = Penjualan::where('transaction_date', 'LIKE', "$tanggal%")->sum('bayar');
             $total_pembelian = Pembelian::where('created_at', 'LIKE', "$tanggal%")->sum('bayar');
             $total_pengeluaran = Pengeluaran::where('created_at', 'LIKE', "$tanggal%")->sum('nominal');
 
             $pendapatan = $total_penjualan - $total_pembelian - $total_pengeluaran;
             $total_pendapatan += $pendapatan;
+            $total_penj += $total_penjualan;
+            $total_peng += $total_pengeluaran;
 
             $no ++;
             $row = array();
@@ -47,7 +55,7 @@ class LaporanController extends Controller
             $row[] = format_uang($pendapatan);
             $data[] = $row;
         }
-        $data[] = array("", "", "", "", "Total Pendapatan", format_uang($total_pendapatan));
+        $data[] = array("Total", "", format_uang($total_penj), "", format_uang($total_peng), format_uang($total_pendapatan));
 
         return $data;
     }
@@ -142,5 +150,57 @@ class LaporanController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function profitloss(){
+        return view('laporan.profit_loss');
+    }
+
+    public function profitloss_data($datefrom = '', $dateto = '',$produk = ''){
+       
+        $penjualan = PenjualanDetail::LeftJoin('produk as p','penjualan_detail.kode_produk','=','p.kode_produk');
+                                    //->Leftjoin('pembelian_detail as pd','pd.kode_produk','=','p.kode_produk');
+        
+
+        if($datefrom == '' || $dateto ==''){
+            $datefrom = date('Y-m-d');
+            $dateto = date('Y-m-d');
+        }
+
+        if($produk != '-') {
+            $penjualan->where('p.nama_produk','like','%'.$produk.'%');
+        }
+
+        $penjualan->whereBetween(DB::raw('DATE(penjualan_detail.created_at)'), [$datefrom, $dateto]);
+        //$penjualan->groupby('p.nama_produk','p.harga_jual','penjualan_detail.sub_total','penjualan_detail.jumlah','harga_beli','penjualan_detail.created_at','id_penjualan');
+
+        $datapenjualan = $penjualan->orderBy('id_penjualan', 'desc')->get(['p.nama_produk','p.harga_jual','penjualan_detail.sub_total as detail_subtotal','penjualan_detail.jumlah as jumlah_beli','p.harga_beli as harga_beli_by_date','penjualan_detail.created_at as tgl_beli','id_penjualan','diskon','penjualan_detail.harga_beli as harga_beli_on_jual']);
+        //dd($datapenjualan);
+        
+        $no = 0;
+        $data = array();
+        $profit = 0;
+        foreach($datapenjualan as $list){
+            $row = [];
+
+            $no++;
+            $profit = (($list->jumlah_beli * $list->harga_jual) - ($list->jumlah_beli * $list->harga_beli_by_date)) - $list->diskon;
+
+            if($list->harga_beli_on_jual > 0){
+                $profit = (($list->jumlah_beli * $list->harga_jual) - ($list->jumlah_beli * $list->harga_beli_on_jual)) - $list->diskon;
+            }
+
+            $row[] = $no;
+            $row[] = date('d M Y H:i',strtotime($list->tgl_beli));
+            $row[] = $list->nama_produk;
+            $row[] = $list->jumlah_beli;
+            $row[] = number_format($list->detail_subtotal);
+            $row[] = number_format($list->diskon);
+            $row[] = number_format($profit);
+            $data[] = $row;
+        }
+
+        $output = array("data" => $data);
+        return response()->json($output);
     }
 }

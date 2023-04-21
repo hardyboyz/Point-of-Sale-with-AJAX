@@ -16,7 +16,7 @@
    <div class="form-group">
       <label for="kode" class="col-md-3 control-label">Kode Member</label>
       <div class="col-md-6">
-         <input id="kode" type="number" class="form-control" name="kode" autofocus required>
+         <input id="kode" type="number" min="1000" value="{{ $output['total_member'] }}" class="form-control" name="kode" autofocus required>
          <span class="help-block with-errors"></span>
       </div>
    </div>

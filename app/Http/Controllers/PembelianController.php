@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace App\Http\Controllers;
 
 use Redirect;
@@ -8,6 +10,8 @@ use App\PembelianDetail;
 use App\Produk;
 use App\Pembelian;
 use Illuminate\Http\Request;
+
+ini_set("date_default_time_zone",'Asia/Jakarta');
 
 class PembelianController extends Controller
 {
@@ -27,21 +31,21 @@ class PembelianController extends Controller
     
         $pembelian = Pembelian::leftJoin('supplier', 'supplier.id_supplier', '=', 'pembelian.id_supplier')
             ->orderBy('pembelian.id_pembelian', 'desc')
-            ->get();
+            ->get(['supplier.nama','pembelian.*','pembelian.created_at as transaction_date']);
         $no = 0;
         $data = array();
         foreach($pembelian as $list){
             $no ++;
             $row = array();
             $row[] = $no;
-            $row[] = tanggal_indonesia(substr($list->created_at, 0, 10), false);
+            $row[] = date('d-m-Y H:i', strtotime($list->created_at));
             $row[] = $list->nama;
             $row[] = $list->total_item;
             $row[] = "Rp. ".format_uang($list->total_harga);
-            $row[] = $list->diskon."%";
+            //$row[] = $list->diskon."%";
             $row[] = "Rp. ".format_uang($list->bayar);
             $row[] = '<div class="btn-group">
-                    <a onclick="showDetail('.$list->id_pembelian.')" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
+                    <a onclick="detail('.$list->id_pembelian.')" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
                     <a onclick="deleteData('.$list->id_pembelian.')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
                 </div>';
             $data[] = $row;
@@ -80,6 +84,7 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request);
         $pembelian = Pembelian::find($request['idpembelian']);
         $pembelian->total_item = $request['totalitem'];
         $pembelian->total_harga = $request['total'];
@@ -109,6 +114,7 @@ class PembelianController extends Controller
         ->get();
         $no = 0;
         $data = array();
+        $total = 0;
         foreach($detail as $list){
             $no ++;
             $row = array();
@@ -119,9 +125,10 @@ class PembelianController extends Controller
             $row[] = $list->jumlah;
             $row[] = "Rp. ".format_uang($list->harga_beli * $list->jumlah);
             $data[] = $row;
+            $total+= ($list->harga_beli * $list->jumlah);
         }
         
-        $output = array("data" => $data);
+        $output = array("data" => $data,'total'=>$total);
         return response()->json($output);
     }
 
@@ -133,7 +140,8 @@ class PembelianController extends Controller
      */
     public function edit(Pembelian $pembelian)
     {
-        //
+
+        return Redirect::route('pembelian_detail.edit',compact('pembelian'));
     }
 
     /**

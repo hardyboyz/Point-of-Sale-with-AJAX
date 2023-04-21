@@ -7,25 +7,30 @@
       <h3 class="modal-title">Detail Penjualan</h3>
    </div>
             
-<div class="modal-body">
-   
-   <table class="table table-striped tabel-detail">
-      <thead>
-         <tr>
-            <th width="30">No</th>
-            <th>Kode Produk</th>
-            <th>Nama Produk</th>
-            <th align="right">Harga</th>
-            <th>Jumlah</th>
-            <th align="right">Sub Total</th>
-         </tr>
-      </thead>
-      <tbody></tbody>   
-   </table>
-   
-</div>
+      <div class="modal-body">
          
-   </form>
+         <table class="table table-striped tabel-detail">
+            <thead>
+               <tr>
+                  <th width="30">No</th>
+                  <th>Kode Produk</th>
+                  <th>Nama Produk</th>
+                  <th align="right">Harga</th>
+                  <th>Jumlah</th>
+                  <th align="right">Sub Total</th>
+               </tr>
+            </thead>
+            <tbody></tbody> 
+            <tfoot>
+               <tr>
+                  <th colspan="5" style="text-align:right">Total:</th>
+                  <th></th>
+               </tr>
+            </tfoot>  
+         </table>
+         
+      </div>
+      
 
          </div>
       </div>

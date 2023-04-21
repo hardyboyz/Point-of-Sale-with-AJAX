@@ -66,9 +66,9 @@
     <form class="form form-horizontal form-pembelian" method="post" action="{{  route('pembelian.store') }} ">
       {{ csrf_field() }}
       <input type="hidden" name="idpembelian" value="{{ $idpembelian }}">
-      <input type="hidden" name="total" id="total">
-      <input type="hidden" name="totalitem" id="totalitem">
-      <input type="hidden" name="bayar" id="bayar">
+      <input type="hidden" name="total" id="total" value="{{ isset($pembelian->total_harga) ? $pembelian->total_harga : 0 }}">
+      <input type="hidden" name="totalitem" id="totalitem" value="{{ isset($pembelian->total_item) ?? 0 }}">
+      <input type="hidden" name="bayar" id="bayar" value="{{ isset($pembelian->bayar) ?? 0 }}">
 
       <div class="form-group">
         <label for="totalrp" class="col-md-4 control-label">Total</label>
@@ -116,6 +116,7 @@ $(function(){
      "dom" : 'Brt',
      "bSort" : false,
      "processing" : true,
+     "iDisplayLength" : 1000,
      "ajax" : {
        "url" : "{{ route('pembelian_detail.data', $idpembelian) }}",
        "type" : "GET"
@@ -173,7 +174,7 @@ function selectItem(kode){
 
 function changeCount(id){
      $.ajax({
-        url : "pembelian_detail/"+id,
+        url : "{{ url('pembelian_detail') }}/"+id,
         type : "POST",
         data : $('.form-keranjang').serialize(),
         success : function(data){
@@ -195,7 +196,7 @@ function showProduct(){
 function deleteItem(id){
    if(confirm("Apakah yakin data akan dihapus?")){
      $.ajax({
-       url : "pembelian_detail/"+id,
+       url : "{{ URL('pembelian_detail') }}/"+id,
        type : "POST",
        data : {'_method' : 'DELETE', '_token' : $('meta[name=csrf-token]').attr('content')},
        success : function(data){
@@ -215,7 +216,7 @@ function loadForm(diskon=0){
   $('#totalitem').val($('.totalitem').text());
 
   $.ajax({
-       url : "pembelian_detail/loadform/"+diskon+"/"+$('.total').text(),
+       url : "{{ url('pembelian_detail/loadform') }}/"+$('#diskon').val()+"/"+$('#total').val(),
        type : "GET",
        dataType : 'JSON',
        success : function(data){

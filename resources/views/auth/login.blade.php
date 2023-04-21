@@ -21,13 +21,13 @@
   </div>
 
   <div class="login-box-body">
-    <p class="login-box-msg">Login untuk menggunakan aplikasi</p>
+    <p class="login-box-msg">Please LogIn</p>
 
     <form action="{{ route('login') }}" method="post">
     {{ csrf_field() }}
 
       <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="Email" name="email" value="{{ old('email') }}" required autofocus>
+        <input type="text" class="form-control" placeholder="Username" name="email" value="{{ old('email') }}" required autofocus>
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">

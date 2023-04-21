@@ -2,11 +2,11 @@
 
 namespace Facade\FlareClient\Context;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mime\Exception\InvalidArgumentException;
 use Throwable;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class RequestContext implements ContextInterface
 {
@@ -70,7 +70,11 @@ class RequestContext implements ContextInterface
 
     public function getSession(): array
     {
-        $session = $this->request->getSession();
+        try {
+            $session = $this->request->getSession();
+        } catch (\Exception $exception) {
+            $session = [];
+        }
 
         return $session ? $this->getValidSessionData($session) : [];
     }
