@@ -80,6 +80,11 @@ class PenjualanDetailController extends Controller
         $total = 0;
         $total_item = 0;
         foreach($detail as $list){
+            $rowHari = "";
+            if($list->id_produk == 497 || $list->id_produk == 498){
+                $rowHari = "<input type='number' class='form-control' name='jumlah_hari_$list->id_penjualan_detail' value='$list->jumlah_hari' onChange='changeCount($list->id_penjualan_detail)' style='width:6em' min='1'>";
+            }
+
             $no ++;
             $row = array();
             $row[] = $no;
@@ -87,6 +92,7 @@ class PenjualanDetailController extends Controller
             $row[] = "<span class='label label-warning' style='font-size:1em'>".$list->nama_produk."</span>";
             $row[] = "<span class='label label-success' style='font-size:15px'>Rp. ".format_uang($list->harga_jual)."</span>";
             $row[] = "<input type='number' class='form-control' name='jumlah_$list->id_penjualan_detail' value='$list->jumlah' onChange='changeCount($list->id_penjualan_detail)' style='width:6em'>";
+            $row[] = $rowHari;
             $row[] = "<input type='number' class='form-control rowdiskon' name='diskon_$list->id_penjualan_detail' value='$list->diskon' onChange='changeCount($list->id_penjualan_detail)' style='width:6em'>";
             $row[] = "<span class='label label-success' style='font-size:15px'>Rp. ".format_uang($list->sub_total)."</span>";
             $row[] = '<div class="btn-group">
@@ -97,7 +103,7 @@ class PenjualanDetailController extends Controller
             $total_item += $list->jumlah;
         }
 
-        $data[] = array("<span class='hide total'>$total</span><span class='hide totalitem'>$total_item</span>", "", "", "", "", "", "", "");
+        $data[] = array("<span class='hide total'>$total</span><span class='hide totalitem'>$total_item</span>", "", "", "", "", "", "", "", "");
         
         $output = array("data" => $data);
         return response()->json($output);
@@ -128,6 +134,7 @@ class PenjualanDetailController extends Controller
         if($check->count()){
             $data = $check->first();
             $data->jumlah += 1;
+            $data->jumlah_hari = $request['jumlah_hari'] ?? 1;
             $data->sub_total = ($produk->harga_jual * $data->jumlah) - $produk->diskon;
             $data->save();
         }else{
@@ -138,6 +145,7 @@ class PenjualanDetailController extends Controller
             $detail->harga_jual = $produk->harga_jual;
             $detail->harga_beli = $produk->harga_beli;
             $detail->jumlah = 1;
+            $detail->jumlah_hari = $request['jumlah_hari'] ?? 1;
             $detail->diskon = $produk->diskon;
             $detail->sub_total = $produk->harga_jual - $produk->diskon;
             $detail->save();
@@ -176,11 +184,13 @@ class PenjualanDetailController extends Controller
     public function update(Request $request, $id)
     {
         $nama_input = "jumlah_".$id;
+        $jumlah_hari = "jumlah_hari_".$id;
         $diskon = "diskon_".$id;
         $detail = PenjualanDetail::find($id);
-        $total_harga = ($request[$nama_input] * $detail->harga_jual) - $request[$diskon];
+        $total_harga = (($request[$nama_input] * $detail->harga_jual) * $request[$jumlah_hari]) - $request[$diskon];
 
         $detail->jumlah = $request[$nama_input];
+        $detail->jumlah_hari = $request[$jumlah_hari] ?? 1;
         $detail->sub_total = $total_harga;
         $detail->diskon = $request[$diskon];
         $detail->update();

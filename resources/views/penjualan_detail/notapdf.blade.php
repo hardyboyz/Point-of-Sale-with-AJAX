@@ -25,16 +25,20 @@
          
 <table width="100%" style="border:solid 1px #111">
  
-   <?php $diskon = 0; ?>
+   <?php $diskon = 0; $jumlah_hari = 0; ?>
     @foreach($detail as $data)
-    <?php $diskon+= $data->diskon; ?>
+    <?php 
+      $diskon+= $data->diskon; 
+      if($data->kode_produk == "243856468" || $data->kode_produk == "166461195" )
+         $jumlah_hari = $data->jumlah_hari
+    ?>
     <tr>
        <td style="width:40%">{{ $data->nama_produk }}</td>
        <td align="center"><span style="font-weight:bold">{{ $data->jumlah }}</span></td>
        <td align="left">{{ format_uang($data->sub_total) }}</td>
     </tr>
     @endforeach
-   
+      
     <tr><td colspan="1" align="right">SubTotal</td><td align="right"><b>{{ format_uang($penjualan->total_harga ?? 0) }}</b></td></tr>
     <tr><td colspan="1" align="right">Diskon</td><td align="right"><b>{{ format_uang($diskon) }}</b></td></tr>
     <tr><td colspan="1" align="right">Total</td><td align="right"><b>{{ format_uang($penjualan->bayar ?? 0) }}</b></td></tr>
@@ -42,6 +46,8 @@
     <tr><td colspan="1" align="right">Kembali</td><td align="right"><b>{{ format_uang(($penjualan->diterima ?? 0) - ($penjualan->bayar ?? 0)) }}</b></td></tr>
 
 </table>
+
+@if($jumlah_hari > 0) <h5>Penginapan kucing: {{ $jumlah_hari }} Hari <h5> @endif
 
 <table width="100%">
   <tr>

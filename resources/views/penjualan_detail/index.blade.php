@@ -43,6 +43,7 @@
       <th>Nama Produk</th>
       <th align="right">Harga</th>
       <th>Jumlah</th>
+      <th>Jumlah Hari</th>
       <th>Diskon</th>
       <th align="right">Sub Total</th>
       <th>Aksi</th>
