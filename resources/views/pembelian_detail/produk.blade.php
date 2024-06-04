@@ -23,7 +23,7 @@
             <th>{{ $data->kode_produk }}</th>
             <th>{{ $data->nama_produk }}</th>
             <th>Rp. {{ format_uang($data->harga_beli) }}</th>
-            <th><a onclick="selectItem({{ $data->kode_produk }})" class="btn btn-primary"><i class="fa fa-check-circle"></i> Pilih</a></th>
+            <th><a onclick="selectItem('{{ $data->kode_produk }}')" class="btn btn-primary"><i class="fa fa-check-circle"></i> Pilih</a></th>
           </tr>
          @endforeach
       </tbody>

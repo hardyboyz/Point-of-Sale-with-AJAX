@@ -39,6 +39,7 @@ class LaporanController extends Controller
             $total_penjualan = Penjualan::where('transaction_date', 'LIKE', "$tanggal%")->sum('bayar');
             $total_pembelian = Pembelian::where('created_at', 'LIKE', "$tanggal%")->sum('bayar');
             $total_pengeluaran = Pengeluaran::where('created_at', 'LIKE', "$tanggal%")->sum('nominal');
+            $detail = Pengeluaran::where('created_at', 'LIKE', "$tanggal%")->get('jenis_pengeluaran');
 
             $pendapatan = $total_penjualan - $total_pembelian - $total_pengeluaran;
             $total_pendapatan += $pendapatan;
@@ -51,7 +52,7 @@ class LaporanController extends Controller
             $row[] = tanggal_indonesia($tanggal, false);
             $row[] = format_uang($total_penjualan);
             $row[] = format_uang($total_pembelian);
-            $row[] = format_uang($total_pengeluaran);
+            $row[] = "<span title='".$detail."'>".format_uang($total_pengeluaran)."</span>";
             $row[] = format_uang($pendapatan);
             $data[] = $row;
         }

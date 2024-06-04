@@ -44,7 +44,7 @@ class PenjualanController extends Controller
         $penjualan->where('total_harga','>',0);
 
         $datapenjualan = $penjualan->orderBy('penjualan.id_penjualan', 'desc')->get();
-        //dd($datapenjualan);
+        // dd($datapenjualan);
         
         $no = 0;
         $data = array();
@@ -65,16 +65,18 @@ class PenjualanController extends Controller
             $row[] = $list->kode_member;
             $table = '<table class="table tabel-hovered" style="margin-bottom:0px"><tbody>';
             $diskon = 0;
+            $subtotal = 0;
             foreach($detail as $d){
                 $total = $d->harga * $d->jumlah;
+                $subtotal += $total;
                 $diskon+=$d->diskon;
                 $table.='<tr><th style="font-size:x-small"><span class="badge label-success">'.$d->jumlah.'</span> '.$d->nama_produk.'</th>';
-                $table.='<th style="font-size:small">'.number_format($total).'</th></tr>';
+                $table.='<th class="text-right" style="font-size:small">'.number_format($total).'</th></tr>';
             }
             $table .= '</tbody></table>';
             $row[] = $table;
-            $row[] = "Rp. ".format_uang($list->total_harga);
-            $row[] = $list->diskon;
+            $row[] = "Rp. ".format_uang($subtotal);
+            $row[] = $diskon;
             $row[] = number_format($list->bayar);
             $row[] = $list->name;
             $row[] = '<div class="btn-group">
@@ -122,21 +124,24 @@ class PenjualanController extends Controller
             //$row[] = $list->total_item;
             $table = '<table class="table tabel-hovered" style="margin-bottom:0px"><tbody>';
             $diskon = 0;
+            $subtotal = 0;
             foreach($detail as $d){
-                $diskon+=$d->diskon;
+                $total = $d->harga * $d->jumlah;
+                $subtotal += $total;
+                $diskon += $d->diskon;
                 $table.='<tr><td style="font-size:small"><span class="badge label-danger">'.$d->jumlah.'</span> '.$d->nama_produk.'</td>';
                 $table.='<td style="font-size:small;text-align:right">'.number_format($d->harga * $d->jumlah).'</td></tr>';
             }
             $table .= '</tbody></table>';
             $row[] = $table;
-            $row[] = "Rp. ".format_uang($list->total_harga);
+            $row[] = "Rp. ".format_uang($subtotal);
             $row[] = $diskon;
             // $row[] = "<span class='label label-warning'>Rp. ".format_uang($list->bayar)."</span>";
             $row[] = number_format($list->bayar);
             $row[] = $list->name;
             $row[] = '<div class="btn-group">
                     <a title="Print" href="notapdf/'.$list->id_penjualan.'" class="btn btn-success btn-sm"><i class="fa fa-print"></i></a>
-                    <a href="'.$list->id_penjualan.'" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+                    <!--<a href="'.$list->id_penjualan.'" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>-->
                     <a onclick="deleteData('.$list->id_penjualan.')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
                     </div>';
             $data[] = $row;

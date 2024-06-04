@@ -76,7 +76,7 @@ $(function(){
 
           // Total over all pages
           total = api
-              .column( 7 )
+              .column( 6 )
               .data()
               .reduce( function (a, b) {
                   return intVal(a) + intVal(b);
@@ -84,14 +84,14 @@ $(function(){
 
           // Total over this page
           pageTotal = api
-              .column( 7, { page: 'current'} )
+              .column( 6, { page: 'current'} )
               .data()
               .reduce( function (a, b) {
                   return intVal(a) + intVal(b);
               }, 0 );
 
           // Update footer
-          $( api.column( 7 ).footer() ).html(
+          $( api.column( 6 ).footer() ).html(
               'Rp '+number_format(pageTotal)
           );
       }

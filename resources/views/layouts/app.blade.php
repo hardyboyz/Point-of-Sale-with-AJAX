@@ -10,12 +10,13 @@
   <link rel="stylesheet" href="{{ asset('adminLTE/bootstrap/css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
   <link rel="stylesheet" href="{{ asset('adminLTE/dist/css/AdminLTE.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('adminLTE/dist/css/skins/skin-blue.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminLTE/dist/css/skins/skin-green-light.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminLTE/dist/css/skins/skin-yellow-light.min.css') }}">
   <link rel="stylesheet" href="{{ asset('adminLTE/plugins/datatables/dataTables.bootstrap.css') }}">
   <link rel="stylesheet" href="{{ asset('adminLTE/plugins/datepicker/datepicker3.css') }}">
-  <link rel="shortcut icon" href=" {{asset('images/logo_kecil.png')}} " type="image/x-icon">
+  <link rel="shortcut icon" href="{{asset('images/logo_kecil.png')}}" type="image/x-icon">
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-yellow-light sidebar-mini" style="background-color: #B1789c198">
 <div class="wrapper">
 
    <!-- Header -->
@@ -93,6 +94,10 @@
         <li><a href="{{ route('penjualan.index') }}"><i class="fa fa-upload"></i> <span>Sales</span></a></li>
         <li><a href="{{ route('laporan.profit_loss') }}"><i class="fa fa-file-pdf-o"></i> <span>Profit/Loss</span></a></li>
         <li><a href="{{ route('laporan.index') }}"><i class="fa fa-file-pdf-o"></i> <span>Income/Expenses</span></a></li>
+
+        <li><a href="{{ route('penginapan.index') }}"><img src="{{asset('images/logo_kecil.png') }}" width="30px" /><span>Penginapan Kucing</span></a></li>
+        <li><a href="{{ route('pengeluaran_produk.index') }}"><i class="fa fa-file-pdf-o"></i> <span>Pengeluaran Produk</span></a></li>
+      
         <li><a href="{{ route('member.index') }}"><i class="fa fa-credit-card"></i> <span>Member</span></a></li>
         <li><a href="{{ route('setting.index') }}"><i class="fa fa-gears"></i> <span>Setting</span></a></li>
         <li><a href="{{ route('user.index') }}"><i class="fa fa-user"></i> <span>Users</span></a></li>   
@@ -101,7 +106,8 @@
         <li><a href="{{ route('transaksi.new') }}"><i class="fa fa-cart-plus"></i> <span>New Transaction</span></a></li>
         <li><a href="{{ route('transaksi.mytransaction') }}"><i class="fa fa-list"></i> <span>Transaction Today</span></a></li>
         <li><a href="{{ route('member.index') }}"><i class="fa fa-credit-card"></i> <span>Member</span></a></li>
-        <li><a href="{{ route('penginapan.index') }}"><img src="/public/images/logo_kecil.png" width="30px" /><span>Penginapan Kucing</span></a></li>
+        <li><a href="{{ route('penginapan.index') }}"><img src="{{asset('images/logo_kecil.png') }}" width="30px" /><span>Penginapan Kucing</span></a></li>
+        <li><a href="{{ route('pengeluaran_produk.index') }}"><i class="fa fa-file-pdf-o"></i> <span>Pengeluaran Produk</span></a></li>
       @endif
       </ul>
     </section>

@@ -78,7 +78,7 @@
   <div class="form-group">
     <label for="stok" class="col-md-3 control-label">Stok</label>
     <div class="col-md-2">
-      <input id="stok" type="text" class="form-control" name="stok" required value="0" readonly>
+      <input id="stok" type="text" class="form-control" name="stok" required value="0">
       <span class="help-block with-errors"></span>
     </div>
   </div>

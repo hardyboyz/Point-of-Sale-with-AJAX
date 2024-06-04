@@ -85,7 +85,7 @@ class DNS1D {
      * @return string SVG code.
      * @protected
      */
-    protected function getBarcodeSVG($code, $type, $w = 2, $h = 30, $color = 'black', $showCode = true, $inline = false) {
+    public function getBarcodeSVG($code, $type, $w = 2, $h = 30, $color = 'black', $showCode = true, $inline = false) {
         if (!$this->store_path) {
             $this->setStorPath(app('config')->get("barcode.store_path"));
         }
@@ -98,7 +98,6 @@ class DNS1D {
 			$svg .= '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' . "\n";
 		}
         $svg .= '<svg width="' . round(($this->barcode_array['maxw'] * $w), 3) . '" height="' . $h . '" version="1.1" xmlns="http://www.w3.org/2000/svg">' . "\n";
-        $svg .= "\t" . '<desc>' . strtr($this->barcode_array['code'], $repstr) . '</desc>' . "\n";
         $svg .= "\t" . '<g id="bars" fill="' . $color . '" stroke="none">' . "\n";
         // print bars
         $x = 0;
@@ -132,7 +131,7 @@ class DNS1D {
      * @return string HTML code.
      * @protected
      */
-    protected function getBarcodeHTML($code, $type, $w = 2, $h = 30, $color = 'black', $showCode =false) {
+    public function getBarcodeHTML($code, $type, $w = 2, $h = 30, $color = 'black', $showCode =false) {
         if (!$this->store_path) {
             $this->setStorPath(app('config')->get("barcode.store_path"));
         }
@@ -170,7 +169,7 @@ class DNS1D {
      * @return image or false in case of error.
      * @protected
      */
-    protected function getBarcodePNG($code, $type, $w = 2, $h = 30, $color = array(0, 0, 0), $showCode = false) {
+    public function getBarcodePNG($code, $type, $w = 2, $h = 30, $color = array(0, 0, 0), $showCode = false) {
         if (!$this->store_path) {
             $this->setStorPath(app('config')->get("barcode.store_path"));
         }
@@ -246,7 +245,7 @@ class DNS1D {
      *
      * @return array
     */
-    protected function getBarcodeArray()
+    public function getBarcodeArray()
     {
         return $this->barcode_array;
     }
@@ -316,7 +315,7 @@ class DNS1D {
                 imagestring($png, 3, ($width/2) - ($width_text/2) , ($height - $height_text) , $code, $fgcol);
             }
 
-        $file_name= Str::slug($code);
+        $file_name= Str::slug($code.$type);
         $save_file = $this->checkfile($this->store_path . $file_name . ".png");
 
         if ($imagick) {
@@ -1297,7 +1296,7 @@ class DNS1D {
                                 }
                             case 'B': {
                                     if ($key == 0) {
-                                        $tmpchr = ord($seq[1][[0]]);
+                                        $tmpchr = ord($seq[1][0]);
                                         if (($seq[2] == 1) AND ($tmpchr >= 241) AND ($tmpchr <= 244) AND isset($sequence[($key + 1)]) AND ($sequence[($key + 1)][0] != 'B')) {
                                             switch ($sequence[($key + 1)][0]) {
                                                 case 'A': {
@@ -2420,7 +2419,7 @@ class DNS1D {
     }
 
     protected function setStorPath($path) {
-        $this->store_path = $path;
+        $this->store_path = rtrim($path, '/' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         return $this;
     }
 

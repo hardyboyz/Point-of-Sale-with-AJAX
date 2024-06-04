@@ -42,6 +42,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('penginapan/data', 'PenginapanController@listData')->name('penginapan.data');
     Route::resource('penginapan', 'PenginapanController');
 
+    // Route::get('pengeluaran_produk/data', 'PengeluaranProdukController@listData')->name('pengeluaran_produk.data');
+    // Route::resource('pengeluaran_produk', 'PengeluaranProdukController');
+
 });
 
 Route::group(['middleware' => ['web', 'cekuser:1', 'auth' ]], function(){
@@ -62,7 +65,6 @@ Route::group(['middleware' => ['web', 'cekuser:1', 'auth' ]], function(){
 
     Route::get('pengeluaran/data', 'PengeluaranController@listData')->name('pengeluaran.data');
     Route::resource('pengeluaran', 'PengeluaranController');
-
 
     Route::get('user/data', 'UserController@listData')->name('user.data');
     Route::resource('user', 'UserController');
@@ -91,4 +93,6 @@ Route::group(['middleware' => ['web', 'cekuser:1', 'auth' ]], function(){
 
     Route::resource('setting', 'SettingController');
 });
+Route::get('pengeluaran_produk/data', 'PengeluaranProdukController@listData')->name('pengeluaran_produk.data');
+Route::resource('pengeluaran_produk', 'PengeluaranProdukController');
 

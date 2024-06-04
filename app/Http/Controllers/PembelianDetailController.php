@@ -129,6 +129,11 @@ class PembelianDetailController extends Controller
         $detail->jumlah = $request[$nama_input];
         $detail->harga_beli = $request[$harga_beli];
         $detail->sub_total = $detail->harga_beli * $request[$nama_input];
+
+        $produk = Produk::where('kode_produk',$detail->kode_produk)->first();
+        $produk->harga_beli = $request[$harga_beli];
+        $produk->save();
+
         $detail->update();
     }
 

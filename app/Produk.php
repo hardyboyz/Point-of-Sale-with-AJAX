@@ -10,6 +10,6 @@ class Produk extends Model
     protected $primaryKey = 'id_produk';
     
     public function kategori(){
-        return $this->belongsTo('App\Kategori');
+        return $this->belongsTo('App\Kategori','id_kategori','id_kategori');
     }
 }

@@ -28,16 +28,16 @@ class PenjualanDetailController extends Controller
         $setting = Setting::first();
         $idpenjualan = '';
         $data=[];
-        foreach($product as $p){
-            //$produk[$c]->push('stock',$this->getStock($p->kode_produk));
-            $data[] = ['kode_produk' => $p->kode_produk,
-                        'nama_produk' => $p->nama_produk,
-                        'harga_jual' => (float)$p->harga_jual,
-                        //'stock' => $this->getStock($p->kode_produk)
-                    ];
-        }
+        // foreach($product as $p){
+        //     //$produk[$c]->push('stock',$this->getStock($p->kode_produk));
+        //     $data[] = ['kode_produk' => $p->kode_produk,
+        //                 'nama_produk' => $p->nama_produk,
+        //                 'harga_jual' => (float)$p->harga_jual,
+        //                 //'stock' => $this->getStock($p->kode_produk)
+        //             ];
+        // }
         
-        $produk = $data;
+        $produk = $product;
 
         $login = 1;
 
@@ -149,6 +149,11 @@ class PenjualanDetailController extends Controller
             $detail->diskon = $produk->diskon;
             $detail->sub_total = $produk->harga_jual - $produk->diskon;
             $detail->save();
+
+            if(strtolower($produk->kategori->nama_kategori) !== 'jasa'){
+                $produk->stok = $produk->stok - 1;
+                $produk->update();
+            }
         }
     }
 
@@ -185,15 +190,22 @@ class PenjualanDetailController extends Controller
     {
         $nama_input = "jumlah_".$id;
         $jumlah_hari = "jumlah_hari_".$id;
+
+        $hari = isset($request[$jumlah_hari]) ? $request[$jumlah_hari] : 1;
         $diskon = "diskon_".$id;
         $detail = PenjualanDetail::find($id);
-        $total_harga = (($request[$nama_input] * $detail->harga_jual) * $request[$jumlah_hari]) - $request[$diskon];
+        $total_harga = (($request[$nama_input] * $detail->harga_jual) * $hari) - $request[$diskon];
 
         $detail->jumlah = $request[$nama_input];
         $detail->jumlah_hari = $request[$jumlah_hari] ?? 1;
         $detail->sub_total = $total_harga;
         $detail->diskon = $request[$diskon];
         $detail->update();
+
+        //Update Stock
+        $produk = Produk::where('kode_produk',$detail->kode_produk)->first();
+        $produk->stok = ($produk->stok - $request[$nama_input]) + 1;
+        $produk->update();
     }
 
     /**
@@ -206,6 +218,12 @@ class PenjualanDetailController extends Controller
     {
         $detail = PenjualanDetail::find($id);
         $detail->delete();
+
+        $produk = Produk::where('kode_produk',$detail->kode_produk)->first();
+        if(strtolower($produk->kategori->nama_kategori) !== 'jasa'){
+            $produk->stok = $produk->stok + $detail->jumlah;
+            $produk->update();
+        }
     }
 
     public function newSession()

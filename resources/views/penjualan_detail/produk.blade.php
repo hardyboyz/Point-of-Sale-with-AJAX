@@ -14,18 +14,18 @@
 		      <th>Kode Produk</th>
 		      <th>Nama Produk</th>
 		      <th>Harga Jual</th>
-		      <!-- <th>Stok</th> -->
+		      <th>Stok</th>
 		      <th>Aksi</th>
 		   </tr>
 		</thead>
 		<tbody>
 			@foreach($produk as $data)
 			<tr>
-		      <th>{{ $data['kode_produk'] }}</th>
-		      <th>{{ $data['nama_produk'] }}</th>
-		      <th>Rp. {{ number_format($data['harga_jual']) }}</th>
-		      {{--<th>{{ $data['stock'] }}</th>--}}
-		      <th><a onclick="selectItem('{{ $data['kode_produk'] }}')" class="btn btn-primary"><i class="fa fa-check-circle"></i> Pilih</a></th>
+		      <th>{{ $data->kode_produk }}</th>
+		      <th>{{ $data->nama_produk }}</th>
+		      <th>Rp. {{ number_format($data->harga_jual) }}</th>
+		      <th>{{ $data->stok }}</th>
+		      <th><a onclick="selectItem('{{ $data->kode_produk }}')" class="btn btn-primary"><i class="fa fa-check-circle"></i> Pilih</a></th>
 		    </tr>
 			@endforeach
 		</tbody>

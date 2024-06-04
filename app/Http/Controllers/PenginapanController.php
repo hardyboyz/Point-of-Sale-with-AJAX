@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\penginapan;
+use App\Penginapan;
 use App\Member;
 use Illuminate\Http\Request;
 use App\Produk;
 use Auth;
-use Illuminate\Support\Str;
 
 class PenginapanController extends Controller
 {

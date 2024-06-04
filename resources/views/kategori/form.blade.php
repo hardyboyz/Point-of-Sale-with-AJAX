@@ -14,7 +14,7 @@
    
    <input type="hidden" id="id" name="id">
    <div class="form-group">
-      <label for="nama" class="col-md-3 control-label">Nama Produk</label>
+      <label for="nama" class="col-md-3 control-label">Nama Kategori</label>
       <div class="col-md-6">
          <input id="nama" type="text" class="form-control" name="nama" autofocus required>
          <span class="help-block with-errors"></span>
